@@ -13,12 +13,19 @@
 
 class CalibrationValues {
 public:
-    CalibrationValues();
-    void getFile(std::string filePath);
+    CalibrationValues() = default;
+    int doTheThing();
     int getSumOfValues();
+    void calibrateValues();
+    void getFile();
 private:
+    std::vector<std::string> uncalibratedGibberish;
+    std::vector<std::string> cleanUncalibrated;
     std::vector<int> calibratedValues;
-    void getValue(std::string inputLine);
+    void cleanValues();
+    static void replaceFirst(std::string &base, const std::string& toRep, const std::string& repWith);
+    static void replaceAll(std::string &base, const std::string& toRep, const std::string& repWith);
+    void replaceAllPreserveFirstLast(std::string &base, std::string toRep,const std::string& repWith);
 };
 
 

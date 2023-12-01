@@ -1,6 +1,9 @@
 #include <iostream>
+#include "CalibrationValues.h"
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    CalibrationValues calib;
+    int result = calib.doTheThing();
+    std::cout << result << std::endl;
     return 0;
 }
