@@ -10,6 +10,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
+#include "StringUtils.h"
 
 class CalibrationValues {
 public:
@@ -23,9 +24,6 @@ private:
     std::vector<std::string> cleanUncalibrated;
     std::vector<int> calibratedValues;
     void cleanValues();
-    static void replaceFirst(std::string &base, const std::string& toRep, const std::string& repWith);
-    static void replaceAll(std::string &base, const std::string& toRep, const std::string& repWith);
-    void replaceAllPreserveFirstLast(std::string &base, std::string toRep,const std::string& repWith);
 };
 
 
