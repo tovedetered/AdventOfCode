@@ -8,7 +8,7 @@ using namespace std;
 
 void CalibrationValues::getFile() {
     std::string line;
-    ifstream fullInput("/Users/spenser/CLionProjects/AdventOfCode/Data/Data.txt", ios::in);
+    ifstream fullInput("/Users/REDACTED/CLionProjects/AdventOfCode/Data/Data.txt", ios::in);
     if(!fullInput){
         cerr << "ERROR Data.txt could not be opened" << endl;
         exit(1);
