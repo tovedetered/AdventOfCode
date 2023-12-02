@@ -36,6 +36,17 @@ void PossibleGames::determinePossibility(int red, int green, int blue) {
     }
 }
 
+void PossibleGames::determineLeastPossible() {
+    greatestNums great {0, 0, 0, 0};
+    int power;
+    for(string line : lines) {
+        great = findBiggestNumbers(line);
+        power = great.greatGreen * great.greatBlue * great.greatRed;
+        powers.push_back(power);
+    }
+}
+
+
 numAndColor PossibleGames::getSectionDetails(const string& section, int start) {
     int pos = section.find(' ', start);
     if(pos == string::npos){
@@ -98,7 +109,7 @@ string PossibleGames::findBetweenThing(const string& input, int i) {
 
 int PossibleGames::calculateSum() {
     int total = 0;
-    for(int i : possibleGameID){
+    for(int i : powers){
         total += i;
     }
     return total;

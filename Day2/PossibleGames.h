@@ -36,8 +36,10 @@ public:
     int calculateSum();
     void getData();
     void determinePossibility(int red, int green, int blue);
+    void determineLeastPossible();
 private:
     vector<int> possibleGameID;
+    vector<int> powers;
     vector<string> lines;
     vector<string> temp;
     size_t startingPos;
