@@ -12,6 +12,19 @@
 #include <iostream>
 #include <algorithm>
 
+struct numAndColor{
+    int num;
+    std::string color;
+    int newStart;
+};
+
+struct greatestNums{
+    int greatRed;
+    int greatBlue;
+    int greatGreen;
+    int ID;
+};
+
 using namespace std;
 
 class PossibleGames {
@@ -31,6 +44,8 @@ private:
     static int findID(const string& input);
     static long findNumSemi(string input);
     string findBetweenThing(const string& input, int i);
+    greatestNums findBiggestNumbers(const string& line);
+    static numAndColor getSectionDetails(const string& section, int start);
 };
 
 

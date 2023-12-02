@@ -18,91 +18,42 @@ void PossibleGames::getData() {
 }
 
 void PossibleGames::determinePossibility(int red, int green, int blue) {
-    int ID;
-    long numSemi;
-    string thing;
-    string temp;
-    size_t prevPos;
-    size_t pos = 0;
-    size_t pos2 = 0;
-    size_t numChar;
-    int greatestNumRed = 0;
-    int greatestNumBlue = 0;
-    int greatestNumGreen = 0;
-    int tmp = 0;
+    greatestNums great {0, 0, 0, 0};
     bool possible;
     for(string line : lines){
-        //Split into each pull
-        //Read Id -> up to colon
-        ID = findID(line);
-        //Read pull to semicolon or End line
-        numSemi = findNumSemi(line);
-        for(int i = 0; i < numSemi + 1; ++i){
-            thing = findBetweenThing(line, i);
-            if(thing == "$$$"){
-                break;
-            }
-            //read the line
-            while(true) {
-                if(pos2 == 0){
-                    prevPos = pos2;
-                }
-                else{
-                    prevPos = pos2 - 1;
-                }
-
-                pos = thing.find(' ', prevPos);
-                if(pos == string::npos){
-                    break;
-                }
-                pos2 = thing.find(' ', pos + 1);
-                numChar = pos2 - pos;
-                temp = thing.substr(pos + 1, numChar - 1);
-                tmp = stoi(temp);
-
-                pos = pos2;
-                pos2 = thing.find(',', pos + 1);
-                if(pos2 == string::npos){
-                    pos2 = thing.length();
-                }
-                numChar = pos2 - pos;
-                temp = thing.substr(pos + 1, numChar - 1);
-                if(temp == "blue"){
-                    if(tmp > greatestNumBlue) greatestNumBlue = tmp;
-                }
-                else if(temp == "red"){
-                    if(tmp > greatestNumRed) greatestNumRed = tmp;
-                }
-                else if(temp == "green"){
-                    if(tmp > greatestNumGreen) greatestNumGreen = tmp;
-                }
-                else{
-                    exit(1);
-                }
-            }
-            pos2 = 0;
-            // 3 blue, 4 red
-        }
-        startingPos = 0;
-        //Know number of each type in pull
-
-        //determine if possible
-        if(greatestNumRed > red || greatestNumBlue > blue || greatestNumGreen > green){
+        great = findBiggestNumbers(line);
+        if(great.greatRed > red || great.greatBlue > blue || great.greatGreen > green){
             possible = false;
         }
         else{
             possible = true;
         }
         if(possible) {
-            possibleGameID.push_back(ID);
+            possibleGameID.push_back(great.ID);
         }
         possible = false;
-        greatestNumRed = 0;
-        greatestNumGreen = 0;
-        greatestNumBlue = 0;
-
+        great = {0,0,0,0};
     }
+}
 
+numAndColor PossibleGames::getSectionDetails(const string& section, int start) {
+    int pos = section.find(' ', start);
+    if(pos == string::npos){
+        return {0, "$$$", 0};
+    }
+    int pos2 = section.find(' ', pos + 1);
+    int numChar = pos2 - pos;
+    string temp = section.substr(pos + 1, numChar - 1);
+    int tmp = stoi(temp);
+
+    pos = pos2;
+    pos2 = section.find(',', pos + 1);
+    if(pos2 == string::npos){
+        pos2 = section.length();
+    }
+    numChar = pos2 - pos;
+    temp = section.substr(pos + 1, numChar - 1);
+    return {tmp, temp, pos2};
 }
 
 int PossibleGames::findID(const string& input) {
@@ -151,4 +102,51 @@ int PossibleGames::calculateSum() {
         total += i;
     }
     return total;
+}
+
+greatestNums PossibleGames::findBiggestNumbers(const string& line) {
+    int greatestNumRed = 0;
+    int greatestNumBlue = 0;
+    int greatestNumGreen = 0;
+    numAndColor Selection{ 0, "$$$", 0 };
+    int ID;
+    long numSemi;
+    string activeSelection;
+    size_t prevPos;
+    ID = findID(line);
+    numSemi = findNumSemi(line);
+    for(int i = 0; i < numSemi + 1; ++i){
+        activeSelection = findBetweenThing(line, i);
+        if(activeSelection == "$$$"){
+            break;
+        }
+        while(true) {
+            if(Selection.newStart == 0){
+                prevPos = 0;
+            }
+            else{
+                prevPos = Selection.newStart - 1;
+            }
+            Selection = getSectionDetails(activeSelection, prevPos);
+            if(Selection.color == "blue"){
+                if(Selection.num > greatestNumBlue) greatestNumBlue = Selection.num;
+            }
+            else if(Selection.color == "red"){
+                if(Selection.num > greatestNumRed) greatestNumRed = Selection.num;
+            }
+            else if(Selection.color == "green"){
+                if(Selection.num > greatestNumGreen) greatestNumGreen = Selection.num;
+            }
+            else if(Selection.color == "$$$"){
+                break;
+            }
+            else{
+                exit(1);
+            }
+        }
+        Selection = {0, "$$$", 0};
+    }
+    startingPos = 0;
+    return {greatestNumRed, greatestNumBlue,
+            greatestNumGreen, ID};
 }
