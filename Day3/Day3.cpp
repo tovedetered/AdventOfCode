@@ -7,10 +7,7 @@
 
 int main(){
     Manifold mani;
-    mani.getFile();
-    mani.findPartNumbers();
-    int result = mani.getFinal();
-
+    int result = mani.part1();
     std::cout << result << std::endl;
     return 0;
 };

@@ -128,3 +128,9 @@ int Manifold::getFinal() {
     }
     return total;
 }
+
+int Manifold::part1() {
+    getFile();
+    findPartNumbers();
+    return getFinal();
+}

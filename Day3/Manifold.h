@@ -24,6 +24,7 @@ public:
     void getFile();
     void findPartNumbers();
     int getFinal();
+    int part1();
 private:
     char* lines;
     size_t lineLength{};
