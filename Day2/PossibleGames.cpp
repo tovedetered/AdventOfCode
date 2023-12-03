@@ -19,19 +19,11 @@ void PossibleGames::getData() {
 
 void PossibleGames::determinePossibility(int red, int green, int blue) {
     greatestNums great {0, 0, 0, 0};
-    bool possible;
     for(string line : lines){
         great = findBiggestNumbers(line);
         if(great.greatRed > red || great.greatBlue > blue || great.greatGreen > green){
-            possible = false;
-        }
-        else{
-            possible = true;
-        }
-        if(possible) {
             possibleGameID.push_back(great.ID);
         }
-        possible = false;
         great = {0,0,0,0};
     }
 }
