@@ -7,7 +7,7 @@
 
 int main(){
     Manifold mani;
-    int result = mani.part1();
+    int result = mani.part2();
     std::cout << result << std::endl;
     return 0;
 };

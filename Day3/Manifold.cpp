@@ -123,7 +123,7 @@ partNumberDetails Manifold::isPartNum(int xLoc, int yLoc) {
 
 int Manifold::getFinal() {
     int total = 0;
-    for(int i : partNumbers){
+    for(int i : gearRatios){
         total += i;
     }
     return total;
@@ -132,5 +132,150 @@ int Manifold::getFinal() {
 int Manifold::part1() {
     getFile();
     findPartNumbers();
+    return getFinal();
+}
+
+void Manifold::findGearRatios() {
+    gearDetails details {};
+    for(int currentRow = 0; currentRow < numLines; currentRow++){
+        for(int column = 0; column < greatestLineLength; column++){
+            if(lines[access(column, currentRow)] == '*') {
+                details = isGear(column, currentRow);
+                if (details.valid) {
+                    gearRatios.push_back(details.ratio);
+                }
+            }
+        }
+    }
+}
+
+gearDetails Manifold::isGear(int x, int y) {
+    //gear is adjacent to EXACTLY 2 partNums
+    gearDetails details{};
+    bool possible = false;
+    char currentValue;
+    int numGear = 0;
+    vector<int> gears;
+    active character;
+    int thing;
+    int tX = 0;
+    int startX;
+    int startY;
+    string number;
+    //Look around gear
+   for(int i = 0; i < 8; i++){
+       character = circleThing(x, y, i);
+       if(character.value == '$') continue;
+       if(isdigit(character.value)){
+           tX = character.x;
+           //find left-most digit then get the number
+           while(true){
+               if(tX != 0){
+                   if(isdigit(lines[access(tX - 1, character.y)])){
+                       tX -= 1;
+                   }
+                   else{
+                       break;
+                   }
+               }
+               else{
+                   break;
+               }
+           }
+           if(tX != 0) startX = tX - 1;
+           else startX = tX;
+
+
+
+           while(true){
+               if(!isdigit(lines[access(tX, character.y)])) break;
+               number.push_back(lines[access(tX, character.y)]);
+               tX += 1;
+           }
+           if(character.y == y + 1){
+               tX = character.x - 1;
+           }
+           //Have coordinate of left most + 1 value and y val
+           startX = clamp(tX, x + 1, x - 1);
+           cerr << startX;
+           if(startX == x + 1){
+               if(character.y == y) i = 3;
+               else if(character.y == y + 1) i = 4;
+               else if(character.y == y - 1) i = 2;
+               else {cerr << "Clamp failed somehow LOL"; exit(53);}
+           }
+           else if(startX == x - 1){
+               if(character.y == y) i = 7;
+               else if(character.y == y + 1) i = 6;
+               else if(character.y == y - 1) i = 0;
+               else {cerr << "Clamp failed somehow LOL"; exit(54);}
+           }
+           else if(startX == x){
+               if(character.y == y + 1) i = 5; //DOWN one
+               else if(character.y == y - 1) i = 1; //UP one
+               else {cerr << "Clamp failed somehow LOL"; exit(55);}
+           }
+           else {cerr << "Clamp failed somehow LOL"; exit(56);}
+           if(numGear < 2){
+               gears.push_back(stoi(number));
+               numGear ++;
+           }
+           else return {0,false};
+       }
+   }
+   if(numGear != 2) return {0,false};
+
+   int ratio = gears[0] * gears[1];
+   details = {ratio, true};
+   return details;
+}
+
+active Manifold::circleThing(int x, int y, int i) {
+    switch(i){
+        case 0:
+            if(x != 0 && y != 0) return {x - 1, y - 1, lines[access(x - 1, y - 1)]};
+            else return {0, 0, '$'};
+        case 1:
+            if(y != 0) return {x, y -1, lines[access(x, y - 1)]};
+            else return {0, 0, '$'};
+            break;
+        case 2:
+            if(x < greatestLineLength && y != 0) return {x + 1, y - 1, lines[access(x + 1, y - 1)]};
+            else return {0, 0, '$'};
+            break;
+        case 3:
+            if(x < greatestLineLength) return {x + 1, y, lines[access(x + 1, y)]};
+            else return {0, 0, '$'};
+            break;
+        case 4:
+            if(x < greatestLineLength && y < numLines) return {x + 1, y + 1, lines[access(x + 1, y+ 1)]};
+            else return {0, 0, '$'};
+            break;
+        case 5:
+            if(y < numLines) return {x, y + 1, lines[access(x, y + 1)]};
+            else return {0, 0, '$'};
+            break;
+        case 6:
+            if(x != 0 && y < numLines) return {x - 1, y + 1, lines[access(x - 1, y + 1)]};
+            else return {0, 0, '$'};
+            break;
+        case 7:
+            if(x != 0) return {x - 1, y + 1, lines[access(x - 1, y + 1)]};
+            else return {0, 0, '$'};
+            break;
+        default:
+            exit(3);
+    }
+}
+
+int Manifold::clamp(int val, int upperBound, int lowerBound) {
+    if(val <= upperBound && val >= lowerBound) return val;
+    else if(val > upperBound) return upperBound;
+    else return lowerBound;
+}
+
+int Manifold::part2() {
+    getFile();
+    findGearRatios();
     return getFinal();
 }
